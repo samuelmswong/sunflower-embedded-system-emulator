@@ -42,6 +42,30 @@
 void
 mbitprint(Engine *E, State *S, short nbits, ulong num)
 {
+		assert(nbits >= 32);
+        int	i = 0;
+
+        for (i = (nbits-1); i >= 0; i--)
+        {
+			mprint(E, S, nodeinfo, "%c", ((num >> i)&1) + '0');
+
+			if (!(i%4))
+			{
+				mprint(E, S, nodeinfo, "%c", ' ');
+			}
+
+			if (!(i%32))
+			{
+				mprint(E, S, nodeinfo, "%c", ' ');
+			}
+        }
+
+        return;
+}
+
+void
+mbit64print(Engine *E, State *S, short nbits, uvlong num)
+{
 		assert(nbits >= 64);
         int	i = 0;
 

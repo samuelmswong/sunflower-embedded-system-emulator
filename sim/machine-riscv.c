@@ -161,7 +161,7 @@ riscvdumpregs(Engine *E, State *S)
 		mprint(E, S, nodeinfo, "x%-2d\t", i);
 		print_integer_register_abi(E, S, i);
 		mprint(E, S, nodeinfo, "\t", i);
-		mbitprint(E, S, 64, S->riscv->R[i]);
+		mbit64print(E, S, 64, S->riscv->R[i]);
 		mprint(E, S, nodeinfo, "  [0x%016llx]\n", S->riscv->R[i]);
 	}
 
