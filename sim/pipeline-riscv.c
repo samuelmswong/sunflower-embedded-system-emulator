@@ -927,7 +927,7 @@ riscvstep(Engine *E, State *S, int drain_pipeline)
 void
 riscvdumppipe(Engine *E, State *S)
 {
-	mprint(E, S, nodeinfo, "\nnode ID=%d, PC=0x" UVLONGFMT ", ICLK=" UVLONGFMT ". \n",
+	mprint(E, S, nodeinfo, "\nnode ID=%d, PC=0x" UHVLONGFMT ", ICLK=" UVLONGFMT ". \n",
 			S->NODE_ID, S->PC, S->ICLK);
 	if (S->riscv->P.WB.valid)
 	{
