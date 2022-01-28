@@ -568,7 +568,7 @@ riscVresetcpu(Engine *E, State *S)
 	S->finishclk = 0;
 	
 	S->step = riscvstep;
-	S->pipelined = 1;
+	S->pipelined = 0;
 	S->pipeshow = 0;
 
 	fault_setnodepfun(E, S, "urnd");
