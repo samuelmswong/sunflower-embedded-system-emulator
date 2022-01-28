@@ -215,7 +215,7 @@ main(int nargs, char *args[])
 
 	/*	In the non-LIBSF version, we use fprintf to write to console	*/
 	fprintf(stderr, "\n");
-	fprintf(stderr, "[ID=%d of %d][PC=0x" UHLONGFMT "][%.1EV, %.1EMHz] ",
+	fprintf(stderr, "[ID=%d of %d][PC=0x" UVLONGFMT "][%.1EV, %.1EMHz] ",
 		E->cp->NODE_ID, E->nnodes, (unsigned long)E->cp->PC,
 		E->cp->VDD, (1/E->cp->CYCLETIME)/1E6);
 
@@ -235,7 +235,7 @@ main(int nargs, char *args[])
 			{
 				sf_riscv_parse();
 			}
-			fprintf(stderr, "[ID=%d of %d][PC=0x" UHLONGFMT "][%.1EV, %.1EMHz] ",
+			fprintf(stderr, "[ID=%d of %d][PC=0x" UVLONGFMT "][%.1EV, %.1EMHz] ",
 				E->cp->NODE_ID, E->nnodes, (unsigned long)E->cp->PC,
 				E->cp->VDD, (1/E->cp->CYCLETIME)/1E6);
 
