@@ -94,7 +94,7 @@ int riscv_instr_latencies[][5] =\
 	[RISCV_OP_DIVU]		{1,	1,	1,	1,	1},
 	[RISCV_OP_REM]		{1,	1,	1,	1,	1},
 	[RISCV_OP_REMU]		{1,	1,	1,	1,	1},
-	/*[RISCV_OP_MAX]	square brackets are necessary	*/
+	/*[RISCV_OP_MAX]	square brackets are necessary for scripts	*/
 	/* RV32F */
 	[RV32F_OP_FLW]		{1,	1,	1,	1,	1},
 	[RV32F_OP_FSW]		{1,	1,	1,	1,	1},
@@ -122,7 +122,7 @@ int riscv_instr_latencies[][5] =\
 	[RV32F_OP_FCVTSW]	{1,	1,	1,	1,	1},
 	[RV32F_OP_FCVTSWU]	{1,	1,	1,	1,	1},
 	[RV32F_OP_FMVWX]	{1,	1,	1,	1,	1},
-	/*[RV32F_OP_FMAX]	square brackets are necessary	*/
+	/*[RV32F_OP_FMAX]	square brackets are necessary for scripts	*/
 	/* RV32D */
 	[RV32D_OP_FLD]		{1,	1,	1,	1,	1},
 	[RV32D_OP_FSD]		{1,	1,	1,	1,	1},
@@ -150,7 +150,7 @@ int riscv_instr_latencies[][5] =\
 	[RV32D_OP_FCVTWUD]	{1,	1,	1,	1,	1},
 	[RV32D_OP_FCVTDW]	{1,	1,	1,	1,	1},
 	[RV32D_OP_FCVTDWU]	{1,	1,	1,	1,	1},
-	/*[RV32D_OP_DMAX]	square brackets are necessary	*/
+	/*[RV32D_OP_DMAX]	square brackets are necessary for scripts	*/
 
 	[RV32UN_OP_UNUPGS]	{1,	1,	1,	1,	1},
 	[RV32UN_OP_UNGCOVS]	{1,	1,	1,	1,	1},
@@ -158,6 +158,22 @@ int riscv_instr_latencies[][5] =\
 	[RV32UN_OP_UNCLVARS]	{1,	1,	1,	1,	1},
 	[RV32UN_OP_UNCPVARS]	{1,	1,	1,	1,	1},
 	[RV32UN_OP_UNPART1]	{1,	1,	1,	1,	1},
+	/*[RV32UN_OP_UNMAX]	square brackets are necessary for scripts	*/
 
-	/*[RV32UN_OP_UNMAX]	square brackets are necessary	*/
+	[RV64I_OP_ADDW]		{1,	1,	1,	1,	1},
+	[RV64I_OP_SLLW]		{1,	1,	1,	1,	1},
+	[RV64I_OP_SRLW]		{1,	1,	1,	1,	1},
+	[RV64I_OP_SRAW]		{1,	1,	1,	1,	1},
+	[RV64I_OP_ADDIW]	{1,	1,	1,	1,	1},
+	[RV64I_OP_SUBW]		{1,	1,	1,	1,	1},
+	[RV64I_OP_SLLIW]	{1,	1,	1,	1,	1},
+	[RV64I_OP_SRLIW]	{1,	1,	1,	1,	1},
+	[RV64I_OP_SRAIW]	{1,	1,	1,	1,	1},
+	[RV64I_OP_LWU]		{1,	1,	1,	1,	1},
+	[RV64I_OP_LD]		{1,	1,	1,	1,	1},
+	[RV64I_OP_SD]		{1,	1,	1,	1,	1},
+
+	/*[RV64I_OP_64IMAX]	square brackets are necessary for scripts	*/
+
+
 };

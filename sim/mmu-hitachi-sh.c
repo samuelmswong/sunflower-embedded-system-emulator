@@ -149,7 +149,7 @@ superHvmtranslate(Engine *E, State *S, int op, TransAddr *tr)
 		}
 		else
 		{
-			if (op == MEM_READ_BYTE)
+			if ((op==MEM_READ_BYTE)||(op==MEM_READ_WORD)||(op==MEM_READ_LONG)||(op==MEM_READ_VLONG))
 			{
 				superHtlbexception(E, S, CPU_LOAD_ADDRERR_EXCP, vaddr);
 			}
@@ -316,7 +316,7 @@ sfatal(E, S, "stopping on tlb exception...\n");
 		int	wflag = 0;
 
 
-		if ((op==MEM_WRITE_BYTE)||(op==MEM_WRITE_WORD)||(op==MEM_WRITE_LONG))
+		if ((op==MEM_WRITE_BYTE)||(op==MEM_WRITE_WORD)||(op==MEM_WRITE_LONG)||(op==MEM_WRITE_VLONG))
 		{
 			wflag = 1;
 		}
@@ -350,7 +350,7 @@ sfatal(E, S, "stopping on tlb exception...\n");
 	}
 	else
 	{
-		if ((op==MEM_READ_BYTE)||(op==MEM_READ_WORD)||(op==MEM_READ_LONG))
+		if ((op==MEM_READ_BYTE)||(op==MEM_READ_WORD)||(op==MEM_READ_LONG)||(op==MEM_READ_VLONG))
 		{
 			superHtlbexception(E, S, TLB_LOAD_MISS_EXCP, vaddr);
 		}

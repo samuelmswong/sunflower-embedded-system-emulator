@@ -144,7 +144,7 @@ riscVwritebyte(Engine *E, State *S, ulong vaddr, ulong xdata)
 	return;
 }
 
-tuck void 	
+tuck void
 riscVwriteword(Engine *E, State *S, ulong vaddr, ulong xdata)
 {
 	int		inram, latency = 0;
@@ -215,7 +215,7 @@ riscVwriteword(Engine *E, State *S, ulong vaddr, ulong xdata)
 	return;
 }
 
-tuck void 	
+tuck void
 riscVwritelong(Engine *E, State *S, ulong vaddr, ulong data)
 {
 	int		inram, latency = 0;
@@ -285,8 +285,75 @@ riscVwritelong(Engine *E, State *S, ulong vaddr, ulong data)
 	return;
 }
 
+tuck void
+riscVwritelonglong(Engine *E, State *S, ulong vaddr, uvlong data)
+{
+	int		inram, latency = 0;
+	TransAddr	trans;
+	ulong		paddr;
 
-tuck uchar 	
+	/*                                                              */
+	/*      Translate address. If error occured, we do nothing:     */
+	/*      faulting instruction will get re-executed after the     */
+	/*      exception is handled.                                   */
+	/*                                                              */
+	trans.vaddr = vaddr;
+	trans.error = 0;
+	S->vmtranslate(E, S, MEM_WRITE_VLONG, &trans);
+	if (trans.error)
+	{
+		return;
+	}
+
+	paddr	= trans.paddr;
+	inram	= 0;
+
+	/*								*/
+	/*	An address error if word data is written to an 		*/
+	/*	address other than 2n or if longword data is written	*/
+	/*	to an address other than 4n				*/
+	/*								*/
+	if (paddr & B0011)
+	{
+		/*	raise address error	*/
+	}
+
+	if ((paddr >= S->MEMBASE) && (paddr < S->MEMEND - 3)) /* -3 for 4th byte */
+	{
+		inram = 1;
+		latency = S->mem_w_latency;
+	}
+
+	if (!inram)
+	{
+		/*							*/
+		/*	   Pass this address off to the devices.	*/
+		/*							*/
+		sfatal(E, S, "Request to write 64bit value to device memory is not supported by Sunflower.");
+
+		return;
+	}
+
+	if (inram)
+	{
+		write_8(S, data, &(S->MEM[paddr - S->MEMBASE]));
+	
+		/*S->MEM[paddr - S->MEMBASE] = (uchar)((data>>24)&0xFF);
+		S->MEM[paddr+1 - S->MEMBASE] = (uchar)((data>>16)&0xFF);
+		S->MEM[paddr+2 - S->MEMBASE] = (uchar)((data>>8)&0xFF);
+		S->MEM[paddr+3 - S->MEMBASE] = (uchar)data&0xFF;*/
+	}
+
+	if (!S->riscv->cache_activated || !trans.cacheable)
+	{
+		S->stallaction(E, S, paddr, MEM_WRITE_STALL, latency);
+	}
+
+	return;
+}
+
+
+tuck uchar
 riscVreadbyte(Engine *E, State *S, ulong vaddr)
 {
 	int		inram, latency = 0;
@@ -397,7 +464,7 @@ riscVreadword(Engine *E, State *S, ulong vaddr)
 	return data;
 }
 
-tuck ulong 	
+tuck ulong
 riscVreadlong(Engine *E, State *S, ulong vaddr)
 {
 	int		inram, latency = 0;
@@ -456,6 +523,74 @@ riscVreadlong(Engine *E, State *S, ulong vaddr)
 	if (!S->riscv->cache_activated || !trans.cacheable)
 	{
 	 	S->stallaction(E, S, paddr, MEM_READ_STALL, latency);
+	}
+
+	return data;
+}
+
+tuck uvlong
+riscVreadlonglong(Engine *E, State *S, ulong vaddr)
+{
+	int		inram, latency = 0;
+	TransAddr	trans;
+	ulong		paddr;
+	uvlong		data = 0;
+
+	/*                                                              */
+	/*      Translate address. If error occured, we do nothing:     */
+	/*      faulting instruction will get re-executed after the     */
+	/*      exception is handled.                                   */
+	/*                                                              */
+	trans.vaddr = vaddr;
+	trans.error = 0;
+	S->vmtranslate(E, S, MEM_READ_VLONG, &trans); // riscVvmtranslate does not use the 3rd arguent
+	if (trans.error)
+	{
+		return 0;
+	}
+
+	paddr	= trans.paddr;
+	inram	= 0;
+
+	/*								*/
+	/*	An address error if word data is written to an 		*/
+	/*	address other than 2n or if longword data is written	*/
+	/*	to an address other than 4n				*/
+	/*								*/
+	if (paddr & B0011)
+	{
+		/*	raise address error	*/
+	}
+
+	if ((paddr >= S->MEMBASE) && (paddr < S->MEMEND - 3)) /* -3 for 4th byte */
+	{
+		inram = 1;
+		latency = S->mem_r_latency;
+		read_8(S, &(S->MEM[paddr - S->MEMBASE]), &data);
+		/*data = (ulong)(S->MEM[paddr - S->MEMBASE]<<24)|\
+				(S->MEM[paddr+1 - S->MEMBASE]<<16)|\
+				(S->MEM[paddr+2 - S->MEMBASE]<<8)|\
+				S->MEM[paddr+3 - S->MEMBASE];*/
+	}
+
+	if (!inram)
+	{
+		/*							*/
+		/*	   Pass this address off to the devices.	*/
+		/*	We perform the necessary bitflip analysis in	*/
+		/*	devport. If addr not found in devport, try	*/
+		/*	arch-specific dev if not, fail with sfatal.	*/
+		/*							*/
+		return devportreadlong(E, S, vaddr);
+	}
+	else
+	{
+		sfatal(E, S, "Request to read 64bit value from device memory is not supported by Sunflower.");
+	}
+
+	if (!S->riscv->cache_activated || !trans.cacheable)
+	{
+		S->stallaction(E, S, paddr, MEM_READ_STALL, latency);
 	}
 
 	return data;

@@ -40,13 +40,17 @@
 #include <string.h>
 #include "sf.h"
 
-tuck uint32_t
+
+/*
+ *	RV64I 64bit register access
+ */
+tuck uint64_t
 reg_read_riscv(Engine *E, State *S, uint8_t n)
 {
 	/*
 	 *	BUG/TODO: Non-existing registers (e.g., CSRs) read as zero. See issue #31.
 	 */
-	uint32_t	data = 0;
+	uint64_t	data = 0;
 
 	if (n <= RISCV_GPR)
 	{
@@ -57,7 +61,7 @@ reg_read_riscv(Engine *E, State *S, uint8_t n)
 }
 
 tuck void
-reg_set_riscv(Engine *E, State *S, uint8_t n, uint32_t data)
+reg_set_riscv(Engine *E, State *S, uint8_t n, uint64_t data)
 {
 	if (n <= RISCV_GPR && n != RISCV_X0)
 	{
@@ -67,6 +71,8 @@ reg_set_riscv(Engine *E, State *S, uint8_t n, uint32_t data)
 
 	return;
 }
+
+
 
 /*
  *	RV32F floating point register access

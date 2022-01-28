@@ -96,6 +96,36 @@ read_4(State * S, uchar * source, ulong * target)
 
 
 void
+big_endian_read_8(uchar * source, uvlong * target)
+{
+	*target = (uvlong)(source[7])|(source[6]<<8)|(source[5]<<16)|(source[4]<<24)|(source[3]<<24)|(source[2]<<24)|(source[1]<<24)|(source[0]<<24);
+
+	return;
+}
+
+void
+little_endian_read_8(uchar * source, uvlong * target)
+{
+	*target = (uvlong)(source[0])|(source[1]<<8)|(source[2]<<16)|(source[3]<<24)|(source[4]<<24)|(source[5]<<24)|(source[6]<<24)|(source[7]<<24);
+
+	return;
+}
+
+void
+read_8(State * S, uchar * source, uvlong * target)
+{
+	if (S->endian == Little)
+	{
+		little_endian_read_8(source, target);
+	}
+	else
+	{
+		big_endian_read_8(source, target);
+	}
+}
+
+
+void
 big_endian_write_2(ushort source, uchar * target)
 {
 	target[1] = (uchar)source&0xFF;
@@ -159,6 +189,49 @@ write_4(State * S, ulong source, uchar * target)
 	else
 	{
 		big_endian_write_4(source, target);
+	}
+}
+
+void
+big_endian_write_8(ulong source, uchar * target)
+{
+	target[7] = (uchar)(source&0xFF);
+	target[6] = (uchar)((source>>8)&0xFF);
+	target[5] = (uchar)((source>>16)&0xFF);
+	target[4] = (uchar)((source>>24)&0xFF);
+	target[3] = (uchar)((source>>32)&0xFF);
+	target[2] = (uchar)((source>>40)&0xFF);
+	target[1] = (uchar)((source>>48)&0xFF);
+	target[0] = (uchar)((source>>56)&0xFF);
+
+	return;
+}
+
+void
+little_endian_write_8(ulong source, uchar * target)
+{
+	target[0] = (uchar)(source&0xFF);
+	target[1] = (uchar)((source>>8)&0xFF);
+	target[2] = (uchar)((source>>16)&0xFF);
+	target[3] = (uchar)((source>>24)&0xFF);
+	target[4] = (uchar)((source>>32)&0xFF);
+	target[5] = (uchar)((source>>40)&0xFF);
+	target[6] = (uchar)((source>>48)&0xFF);
+	target[7] = (uchar)((source>>56)&0xFF);
+
+	return;
+}
+
+void
+write_8(State * S, ulong source, uchar * target)
+{
+	if (S->endian == Little)
+	{
+		little_endian_write_8(source, target);
+	}
+	else
+	{
+		big_endian_write_8(source, target);
 	}
 }
 

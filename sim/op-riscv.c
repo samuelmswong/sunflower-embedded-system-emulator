@@ -44,23 +44,24 @@
 #include "instr-riscv.h"
 #include "mextern.h"
 
-uint32_t
-sign_extend(uint32_t	data, uint8_t n)
+uint64_t
+sign_extend(uint64_t	data, uint8_t n)
 {
-	uint32_t	sign_mask = 1 << (n-1);
-	uint32_t	valid_bits;
-	if (n == 32)
+	// n is the bit location of the sign bit
+	uint64_t	sign_mask = (uint64_t)(1) << (n-1);
+	int64_t	valid_bits;
+	if (n == 64)
 	{
-		valid_bits = -1;
+		valid_bits = (uint64_t)(-1);
 	}
 	else
 	{
-		valid_bits = (1 << n) - 1;
+		valid_bits = ((uint64_t)(1) << n) - 1;
 	}
 	if (data & sign_mask)
 	{
 
-		return (data | (uint32_t) (-1 - valid_bits));
+		return (data | ((int64_t)(-1) - valid_bits));
 	}
 	else
 	{
@@ -132,7 +133,7 @@ void uncertain_check_part2_pc(Engine *E, State *S)
 }
 
 void
-riscv_add(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
+riscv_add(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)	//	RV32I/RV64I
 {
 	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) + reg_read_riscv(E, S, rs2)));
 
@@ -146,7 +147,35 @@ riscv_add(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
 }
 
 void
-riscv_sub(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
+riscv_addw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)	//	RV64I
+{
+	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) + reg_read_riscv(E, S, rs2)));
+
+	if (SF_TAINTANALYSIS)
+	{
+		taintprop(E, S,	taintretreg(E,S,rs1),	taintretreg(E,S,rs2),
+				(uint64_t)rd,		kSunflowerTaintMemTypeRegister);
+	}
+
+	return;
+}
+
+void
+riscv_sub(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)	//	RV32I/RV64I
+{
+	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) - reg_read_riscv(E, S, rs2)));
+
+	if (SF_TAINTANALYSIS)
+	{
+		taintprop(E, S,	taintretreg(E,S,rs1),	taintretreg(E,S,rs2),
+				(uint64_t)rd,		kSunflowerTaintMemTypeRegister);
+	}
+
+	return;
+}
+
+void
+riscv_subw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)	//	RV64I
 {
 	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) - reg_read_riscv(E, S, rs2)));
 
@@ -422,7 +451,7 @@ riscv_xor(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
 }
 
 void
-riscv_sll(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
+riscv_sll(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd) //	RV32I/RV64I
 {
 	int	xlen_b = 5;
 	int	mask = ((1 << xlen_b) - 1);
@@ -440,7 +469,25 @@ riscv_sll(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
 }
 
 void
-riscv_srl(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
+riscv_sllw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd) //	RV64I
+{
+	int	xlen_b = 5;
+	int	mask = ((1 << xlen_b) - 1);
+	uint8_t	shift = reg_read_riscv(E, S, rs2) & mask;
+
+	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) << shift));
+
+	if (SF_TAINTANALYSIS)
+	{
+		taintprop(E, S,	taintretreg(E,S,rs1),	taintretreg(E,S,rs2),
+				(uint64_t)rd,		kSunflowerTaintMemTypeRegister);
+	}
+
+	return;
+}
+
+void
+riscv_srl(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd) //	RV32I/RV64I
 {
 	int	xlen_b = 5;
 	int	mask = ((1 << xlen_b) - 1);
@@ -458,12 +505,30 @@ riscv_srl(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
 }
 
 void
-riscv_sra(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
+riscv_srlw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd) //	RV64I
+{
+	int	xlen_b = 5;
+	int	mask = ((1 << xlen_b) - 1);
+	uint8_t	shift = reg_read_riscv(E, S, rs2) & mask;
+
+	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) >> shift));
+
+	if (SF_TAINTANALYSIS)
+	{
+		taintprop(E, S,	taintretreg(E,S,rs1),	taintretreg(E,S,rs2),
+				(uint64_t)rd,		kSunflowerTaintMemTypeRegister);
+	}
+
+	return;
+}
+
+void
+riscv_sra(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd) //	RV32I/RV64I
 {
 	int		xlen_b = 5;
 	int		mask = ((1 << xlen_b) - 1);
 	uint8_t		shift = reg_read_riscv(E, S, rs2) & mask;
-	uint32_t	data = ((signed int) reg_read_riscv(E, S, rs1)) >> shift;
+	uint32_t	data = ((signed long long) reg_read_riscv(E, S, rs1)) >> shift;
 
 	reg_set_riscv(E, S, rd, data);
 
@@ -476,14 +541,45 @@ riscv_sra(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
 }
 
 void
-riscv_addi(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0)
+riscv_sraw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd) //	RV64I
+{
+	int		xlen_b = 5;
+	int		mask = ((1 << xlen_b) - 1);
+	uint8_t		shift = reg_read_riscv(E, S, rs2) & mask;
+	uint64_t	data = ((signed long long) reg_read_riscv(E, S, rs1)) >> shift;
+
+	reg_set_riscv(E, S, rd, data);
+
+	if (SF_TAINTANALYSIS)
+	{
+		taintprop(E, S,	taintretreg(E,S,rs1),	taintretreg(E,S,rs2),
+				(uint64_t)rd,		kSunflowerTaintMemTypeRegister);
+	}
+	return;
+}
+
+void
+riscv_addi(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV32I/RV64I
 {
 	/*
 	 *	Assumption: imm0 carries no taint	(assumption carries on to all other functions
 	 *	with immediate values but will only be stated here)
 	 */
 
-	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) + (int32_t) sign_extend(imm0, 12)));
+	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) + sign_extend(imm0, 12)));
+
+	if (SF_TAINTANALYSIS)
+	{
+		taintprop(E, S,	taintretreg(E,S,rs1),	0,
+				(uint64_t)rd,		kSunflowerTaintMemTypeRegister);
+	}
+	return;
+}
+
+void
+riscv_addiw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV64I
+{
+	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) + sign_extend(imm0, 12)));
 
 	if (SF_TAINTANALYSIS)
 	{
@@ -496,7 +592,7 @@ riscv_addi(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0)
 void
 riscv_slti(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0)
 {
-	if ((int32_t) reg_read_riscv(E, S, rs1) < (int32_t) sign_extend(imm0, 12))
+	if ((int32_t) reg_read_riscv(E, S, rs1) < sign_extend(imm0, 12))
 	{
 		reg_set_riscv(E, S, rd, 1);
 	}
@@ -578,7 +674,7 @@ riscv_xori(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0)
 }
 
 void
-riscv_slli(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0)
+riscv_slli(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV32I/RV64I
 {
 	int	xlen_b = 5;
 	int	mask = ((1 << xlen_b) - 1);
@@ -596,7 +692,25 @@ riscv_slli(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0)
 }
 
 void
-riscv_srli(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0)
+riscv_slliw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV64I
+{
+	int	xlen_b = 5;
+	int	mask = ((1 << xlen_b) - 1);
+	uint8_t shift = imm0 & mask;
+
+	reg_set_riscv(E, S, rd, (uint64_t)((uint32_t)reg_read_riscv(E, S, rs1) << shift));
+
+	if (SF_TAINTANALYSIS)
+	{
+		taintprop(E, S,	taintretreg(E,S,rs1),	0,
+				(uint64_t)rd,		kSunflowerTaintMemTypeRegister);
+	}
+
+	return;
+}
+
+void
+riscv_srli(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV32I/RV64I
 {
 	int	xlen_b = 5;
 	int	mask = ((1 << xlen_b) - 1);
@@ -614,12 +728,48 @@ riscv_srli(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0)
 }
 
 void
-riscv_srai(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0)
+riscv_srliw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV64I
 {
 	int	xlen_b = 5;
 	int	mask = ((1 << xlen_b) - 1);
 	uint8_t shift = imm0 & mask;
-	uint32_t	data = ((signed int)reg_read_riscv(E, S, rs1)) >> shift;
+
+	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) >> shift));
+
+	if (SF_TAINTANALYSIS)
+	{
+		taintprop(E, S,	taintretreg(E,S,rs1),	0,
+				(uint64_t)rd,		kSunflowerTaintMemTypeRegister);
+	}
+
+	return;
+}
+
+void
+riscv_srai(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV32I/RV64I
+{
+	int	xlen_b = 5;
+	int	mask = ((1 << xlen_b) - 1);
+	uint8_t shift = imm0 & mask;
+	uint64_t	data = ((signed long long)reg_read_riscv(E, S, rs1)) >> shift;
+	reg_set_riscv(E, S, rd, data);
+
+	if (SF_TAINTANALYSIS)
+	{
+		taintprop(E, S,	taintretreg(E,S,rs1),	0,
+				(uint64_t)rd,		kSunflowerTaintMemTypeRegister);
+	}
+
+	return;
+}
+
+void
+riscv_sraiw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV64I
+{
+	int	xlen_b = 5;
+	int	mask = ((1 << xlen_b) - 1);
+	uint8_t shift = imm0 & mask;
+	uint64_t	data = ((signed long long)reg_read_riscv(E, S, rs1)) >> shift;
 	reg_set_riscv(E, S, rd, data);
 
 	if (SF_TAINTANALYSIS)
@@ -821,11 +971,47 @@ riscv_bgeu(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t imm1, uint8_t 
 }
 
 void
+riscv_ld(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint16_t imm0)	//	RV64I
+{
+	uint32_t	addr = reg_read_riscv(E,S, rs1) + sign_extend(imm0, 12);
+
+	uint64_t	value = riscVreadlonglong(E, S, addr);
+
+	reg_set_riscv(E, S, rd, value);
+
+	if (SF_TAINTANALYSIS)
+	{
+		taintprop(E, S,	taintretreg(E,S,rs1),	taintretmems(E,S,addr,4),
+				(uint64_t)rd,		kSunflowerTaintMemTypeRegister);
+	}
+
+	return;
+}
+
+void
 riscv_lw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint16_t imm0)
 {
 	uint32_t	addr = reg_read_riscv(E,S, rs1) + sign_extend(imm0, 12);
 
-	uint32_t	value = riscVreadlong(E, S, addr);
+	uint64_t	value = sign_extend(riscVreadlong(E, S, addr), 32);
+
+	reg_set_riscv(E, S, rd, value);
+
+	if (SF_TAINTANALYSIS)
+	{
+		taintprop(E, S,	taintretreg(E,S,rs1),	taintretmems(E,S,addr,4),
+				(uint64_t)rd,		kSunflowerTaintMemTypeRegister);
+	}
+
+	return;
+}
+
+void
+riscv_lwu(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint16_t imm0) 	//	RV64I
+{
+	uint32_t	addr = reg_read_riscv(E,S, rs1) + sign_extend(imm0, 12);
+
+	uint64_t	value = (uint64_t)0 | (uint32_t)riscVreadlong(E, S, addr);
 
 	reg_set_riscv(E, S, rd, value);
 
@@ -859,7 +1045,7 @@ riscv_lhu(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint16_t imm0)
 {
 	uint32_t	addr = reg_read_riscv(E,S, rs1) + sign_extend(imm0, 12);
 
-	reg_set_riscv(E, S, rd, (uint32_t) riscVreadword(E, S, addr));
+	reg_set_riscv(E, S, rd, (uint64_t) riscVreadword(E, S, addr));
 
 	if (SF_TAINTANALYSIS)
 	{
@@ -893,7 +1079,7 @@ riscv_lbu(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint16_t imm0)
 	uint32_t	addr = reg_read_riscv(E,S, rs1) + sign_extend(imm0, 12);
 	uint8_t		data_b = riscVreadbyte(E, S, addr);
 
-	reg_set_riscv(E, S, rd, (uint32_t) data_b);
+	reg_set_riscv(E, S, rd, (uint64_t) data_b);
 
 	if (SF_TAINTANALYSIS)
 	{
@@ -902,6 +1088,24 @@ riscv_lbu(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint16_t imm0)
 	}
 
 	return;
+}
+
+void
+riscv_sd(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint16_t imm0, uint16_t imm5)	//	RV64I
+{
+	uint32_t	addr = reg_read_riscv(E,S, rs1) + sign_extend(imm0 + (imm5 << 5), 12);
+	uint64_t	value = reg_read_riscv(E,S, rs2);
+
+	riscVwritelonglong(E, S, addr, value);
+
+	if (SF_TAINTANALYSIS)
+	{
+		for (int	i = 0 ; i<4 ; i++)
+		{
+			taintprop(E, S,	taintretreg(E,S,rs1),	taintretreg(E,S,rs2),
+					(uint64_t)(addr+i),	kSunflowerTaintMemTypeMemory);
+		}
+	}
 }
 
 void

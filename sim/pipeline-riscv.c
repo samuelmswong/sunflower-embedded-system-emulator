@@ -149,8 +149,10 @@ riscvloads(int op)
 		case RISCV_OP_LB:
 		case RISCV_OP_LH:
 		case RISCV_OP_LW:
+		case RV64I_OP_LD:	// RV64I
 		case RISCV_OP_LBU:
 		case RISCV_OP_LHU:
+		case RV64I_OP_LWU:	// RV64I
 
 		case RV32F_OP_FLW:
 		case RV32D_OP_FLD:
@@ -182,6 +184,12 @@ riscvreadsreg(int op)
 		case RISCV_OP_SLLI:
 		case RISCV_OP_SRLI:
 		case RISCV_OP_SRAI:
+
+		// RV64I
+		case RV64I_OP_ADDIW:
+		case RV64I_OP_SLLIW:
+		case RV64I_OP_SRLIW:
+		case RV64I_OP_SRAIW:
 		{
 			return 1;
 		}
@@ -204,6 +212,12 @@ riscvreadsreg(int op)
 		case RISCV_OP_SRA:
 		case RISCV_OP_OR:
 		case RISCV_OP_AND:
+
+		// RV64I
+		case RV64I_OP_ADDW:
+		case RV64I_OP_SLLW:
+		case RV64I_OP_SRLW:
+		case RV64I_OP_SRAW:
 		{
 			return 2;
 		}
@@ -238,6 +252,16 @@ riscvsetsreg(int op)
 		case RISCV_OP_SRA:
 		case RISCV_OP_OR:
 		case RISCV_OP_AND:
+
+		// RV64I
+		case RV64I_OP_ADDIW:
+		case RV64I_OP_SLLIW:
+		case RV64I_OP_SRLIW:
+		case RV64I_OP_SRAIW:
+		case RV64I_OP_ADDW:
+		case RV64I_OP_SLLW:
+		case RV64I_OP_SRLW:
+		case RV64I_OP_SRAW:
 		{
 			return 1;
 		}
@@ -295,7 +319,7 @@ riscvfaststep(Engine *E, State *S, int drain_pipeline)
 {
 	int		i;
 	uint32_t	tmpinstr;
-	uint32_t	tmpPC;
+	uint64_t	tmpPC;
 	Picosec		saved_globaltime;
 
 
@@ -421,7 +445,7 @@ int
 riscvstep(Engine *E, State *S, int drain_pipeline)
 {
 	int		i, exec_energy_updated = 0, stall_energy_updated = 0;
-	ulong		tmpPC;
+	uint64_t		tmpPC;
 	Picosec		saved_globaltime;
 	//S->superH->SR.MD = 1;
 

@@ -732,12 +732,14 @@ void	riscvdumphist(Engine *E, State *S, int histogram_id);
 void	riscvdumphistpretty(Engine *E, State *S, int histogram_id);
 void	riscvdumpdistribution(Engine *E, State *S);
 void	riscvdecode(Engine *E, State *S, uint32_t instr, RiscvPipestage *stage);
-uint32_t reg_read_riscv(Engine *E, State *S, uint8_t n);
-void	reg_set_riscv(Engine *E, State *S, uint8_t n, uint32_t data);
+uint64_t reg_read_riscv(Engine *E, State *S, uint8_t n);
+void	reg_set_riscv(Engine *E, State *S, uint8_t n, uint64_t data);
 
 uchar 	riscVreadbyte(Engine *, State *S, ulong addr);
-ulong 	riscVreadlong(Engine *, State *S, ulong addr);
 ushort 	riscVreadword(Engine *, State *S, ulong addr);
+ulong 	riscVreadlong(Engine *, State *S, ulong addr);
+uvlong 	riscVreadlonglong(Engine *, State *S, ulong addr);
+void 	riscVwritelonglong(Engine *, State *S, ulong addr, ulong data);
 void 	riscVwritelong(Engine *, State *S, ulong addr, ulong data);
 void 	riscVwriteword(Engine *, State *S, ulong addr, ulong data);
 void	riscVwritebyte(Engine *, State *S, ulong addr, ulong data);

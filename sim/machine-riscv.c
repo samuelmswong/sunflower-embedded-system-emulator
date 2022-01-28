@@ -161,7 +161,7 @@ riscvdumpregs(Engine *E, State *S)
 		mprint(E, S, nodeinfo, "x%-2d\t", i);
 		print_integer_register_abi(E, S, i);
 		mprint(E, S, nodeinfo, "\t", i);
-		mbitprint(E, S, 32, S->riscv->R[i]);
+		mbitprint(E, S, 64, S->riscv->R[i]);
 		mprint(E, S, nodeinfo, "  [0x%08lx]\n", S->riscv->R[i]);
 	}
 
@@ -352,7 +352,7 @@ riscvlowerboundhist(Engine *E, State *S, int histogram_id0, int output_reg)
 			&S->riscv->histograms[histogram_id0]
 			);
 
-	S->riscv->R[output_reg] = result;
+	S->riscv->R[output_reg] = result;	//	TODO: Confirm this works regardless of whether riscv->R is 32 or 64bit
 
 	return;
 }
@@ -369,7 +369,7 @@ riscvupperboundhist(Engine *E, State *S, int histogram_id0, int output_reg)
 			&S->riscv->histograms[histogram_id0]
 			);
 
-	S->riscv->R[output_reg] = result;
+	S->riscv->R[output_reg] = result;	//	TODO: Confirm this works regardless of whether riscv->R is 32 or 64bit
 
 	return;
 }
@@ -421,7 +421,7 @@ riscvexpectedvaluehist(Engine *E, State *S, int histogram_id0, int output_reg)
 			&S->riscv->histograms[histogram_id0]
 			);
 
-	S->riscv->R[output_reg] = result;
+	S->riscv->R[output_reg] = result;	//	TODO: Confirm this works regardless of whether riscv->R is 32 or 64bit
 
 	return;
 }
@@ -439,7 +439,7 @@ riscvdistlesshist(Engine *E, State *S, int histogram_id0, int Rs2, int output_re
 			Rs2
 			);
 
-	S->riscv->R[output_reg] = result;
+	S->riscv->R[output_reg] = result;	//	TODO: Confirm this works regardless of whether riscv->R is 32 or 64bit
 
 	return;
 }
@@ -458,7 +458,7 @@ riscvdistgrthist(Engine *E, State *S, int histogram_id0, int Rs2, int output_reg
 			Rs2
 			);
 
-	S->riscv->R[output_reg] = result;
+	S->riscv->R[output_reg] = result;	//	TODO: Confirm this works regardless of whether riscv->R is 32 or 64bit
 
 	return;
 }

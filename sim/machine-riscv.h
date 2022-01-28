@@ -37,7 +37,7 @@
 
 typedef struct
 {
-	uint32_t		R[RISCV_XMAX];
+	uint64_t		R[RISCV_XMAX];
 	uint64_t		fR[RF32FD_fMAX];
 	uint32_t		fCSR;
 	RiscvPipe		P;

@@ -157,6 +157,13 @@ riscvdecode(Engine *  E, State *  S, uint32_t instr, RiscvPipestage *  stage)
 
 					break;
 				}
+				case 0b011:	// RV64I - LD
+				{
+					stage->fptr = (void *) riscv_ld;
+					stage->format = INSTR_I;
+					stage->op = RV64I_OP_LD;
+					stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_LD]);
+				}
 				case 0b100:
 				{
 					stage->fptr = (void *) riscv_lbu;
@@ -174,6 +181,13 @@ riscvdecode(Engine *  E, State *  S, uint32_t instr, RiscvPipestage *  stage)
 					stage->instr_latencies = (int *)(&riscv_instr_latencies[RISCV_OP_LHU]);
 
 					break;
+				}
+				case 0b110:	// RV64I - LWU
+				{
+					stage->fptr = (void *) riscv_lwu;
+					stage->format = INSTR_I;
+					stage->op = RV64I_OP_LWU;
+					stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_LWU]);
 				}
 				default:
 				{
@@ -213,6 +227,13 @@ riscvdecode(Engine *  E, State *  S, uint32_t instr, RiscvPipestage *  stage)
 					stage->instr_latencies = (int *)(&riscv_instr_latencies[RISCV_OP_SW]);
 
 					break;
+				}
+				case 0b011:	// RV64I - SD
+				{
+					stage->fptr = (void *) riscv_sd;
+					stage->format = INSTR_S;
+					stage->op = RV64I_OP_SD;
+					stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_SD]);
 				}
 				default:
 				{
@@ -327,7 +348,148 @@ riscvdecode(Engine *  E, State *  S, uint32_t instr, RiscvPipestage *  stage)
 
 			break;
 		}
-		 case 0b0110011:
+		case 0b0011011: // RV64I immediate instructions
+		{
+			switch(tmp->funct3)
+			{
+				case 0b000:	// RV64I - ADDIW
+				{
+					stage->fptr = (void *) riscv_addiw;
+					stage->format = INSTR_I;
+					stage->op = RV64I_OP_ADDIW;
+					stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_ADDIW]);
+
+					break;
+				}
+				case 0b001:	// RV64I - SLLIW
+				{
+					stage->fptr = (void *) riscv_slliw;
+					stage->format = INSTR_I;
+					stage->op = RV64I_OP_SLLIW;
+					stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_SLLIW]);
+
+					break;
+				}
+				case 0b101:
+				{
+					switch(tmp->funct7)
+					{
+						case 0b0000000: // RV64I - SRLIW
+						{
+							stage->fptr = (void *) riscv_srliw;
+							stage->format = INSTR_I;
+							stage->op = RV64I_OP_SRLIW;
+							stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_SRLIW]);
+
+							break;
+						}
+						case 0b0100000: // RV64I - SRAIW
+						{
+							stage->fptr = (void *) riscv_sraiw;
+							stage->format = INSTR_I;
+							stage->op = RV64I_OP_SRAIW;
+							stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_SRAIW]);
+
+							break;
+						}
+						default:
+						{
+							break;
+						}
+					}
+
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
+
+			break;
+		}
+		case 0b0111011: // RV64I register instructions
+		{
+			switch(tmp->funct3)
+			{
+				case 0b000:
+				{
+					switch(tmp->funct7)
+					{
+						case 0b0000000: // RV64I - ADDW
+						{
+							stage->fptr = (void *) riscv_addw;
+							stage->format = INSTR_R;
+							stage->op = RV64I_OP_ADDW;
+							stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_ADDW]);
+
+							break;
+						}
+						case 0b0100000: // RV64I - SUBW
+						{
+							stage->fptr = (void *) riscv_subw;
+							stage->format = INSTR_R;
+							stage->op = RV64I_OP_SUBW;
+							stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_SUBW]);
+
+							break;
+						}
+						default:
+						{
+							break;
+						}
+					}
+
+					break;
+				}
+				case 0b001:	// RV64I - SLLIW
+				{
+					stage->fptr = (void *) riscv_sllw;
+					stage->format = INSTR_R;
+					stage->op = RV64I_OP_SLLW;
+					stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_SLLW]);
+
+					break;
+				}
+				case 0b101:
+				{
+					switch(tmp->funct7)
+					{
+						case 0b0000000: // RV64I - SRLIW
+						{
+							stage->fptr = (void *) riscv_srlw;
+							stage->format = INSTR_R;
+							stage->op = RV64I_OP_SRLW;
+							stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_SRLW]);
+
+							break;
+						}
+						case 0b0100000: // RV64I - SRAIW
+						{
+							stage->fptr = (void *) riscv_sraw;
+							stage->format = INSTR_R;
+							stage->op = RV64I_OP_SRAW;
+							stage->instr_latencies = (int *)(&riscv_instr_latencies[RV64I_OP_SRAW]);
+
+							break;
+						}
+						default:
+						{
+							break;
+						}
+					}
+
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
+
+			break;
+		}
+		case 0b0110011:
 		{
 			switch(tmp->funct7)
 			{
@@ -1365,6 +1527,7 @@ riscvdecode(Engine *  E, State *  S, uint32_t instr, RiscvPipestage *  stage)
 			
 			break;
 		}
+
 
 		/* 64 bit long instructions. Decode *just* these 32 bits and pass  */
 		/* responsibilty for handling downstream  */

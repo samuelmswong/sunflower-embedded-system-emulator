@@ -126,9 +126,11 @@ enum
 	MEM_READ_BYTE,
 	MEM_READ_WORD,
 	MEM_READ_LONG,
+	MEM_READ_VLONG,
 	MEM_WRITE_BYTE,
 	MEM_WRITE_WORD,
 	MEM_WRITE_LONG,
+	MEM_WRITE_VLONG,
 
 	MEM_READ_STALL,
 	MEM_WRITE_STALL,
@@ -611,7 +613,7 @@ struct State
 
 	InterruptQ	*intrQ;
 
-	uint32_t		PC;
+	uint64_t		PC;
 	ulong		STARTPC;
 	ulong		PCSTACK[MAX_PCSTACK_HEIGHT];
 	int		pcstackheight;
