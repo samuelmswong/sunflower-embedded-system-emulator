@@ -386,8 +386,10 @@ void	pic_intr_enqueue(Engine *, State *dptr, InterruptQ *q, int type, int value,
 void* 	pic_intr_dequeue(Engine *, State *S, InterruptQ *q);
 void	read_2(State * S, uchar * source, ushort * target);
 void	read_4(State * S, uchar * source, ulong * target);
+void	read_8(State * S, uchar * source, uvlong * target);
 void	write_2(State *S, ushort source, uchar * target);
 void	write_4(State * S, ulong source, uchar * target);
+void	write_8(State * S, uvlong source, uchar * target);
 
 
 
