@@ -373,6 +373,20 @@ TokenTab riscv_token_table [] =
 	{"XOR",		T_XOR},
 	{"XORI",	T_XORI},
 
+	/* RV64I Intstructions */
+	{"ADDW",	T_ADDW},
+	{"SUBW",	T_SUBW},
+	{"SLLW",	T_SLLW},
+	{"SRLW",	T_SRLW},
+	{"SRAW",	T_SRAW},
+	{"ADDIW",	T_ADDIW},
+	{"SLLIW",	T_SLLIW},
+	{"SRLIW",	T_SRLIW},
+	{"SRAIW",	T_SRAIW},
+	{"LD",		T_LD},
+	{"LWU",		T_LWU},
+	{"SD",		T_SD},
+
 	{0,		0},
 };
 

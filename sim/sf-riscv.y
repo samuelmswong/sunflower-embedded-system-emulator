@@ -2060,6 +2060,47 @@ add_riscv_instr	: T_ADD reg ',' reg ',' reg
 		}
 		;
 
+addw_riscv_instr	: T_ADDW reg ',' reg ',' reg
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_addw(yyengine, yyengine->cp, $4, $6, $2);
+				}
+
+				uint32_t tmp = (0b0111011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b000 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	rs2,	bit 20-24		*/
+						| (0b0000000 << 25)	/*	funct7,	bit 25-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within alocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			}
+		}
+		;
+
 addi_riscv_instr	: T_ADDI reg ',' reg ',' simm
 		{
 			if (yyengine->scanning)
