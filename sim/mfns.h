@@ -739,7 +739,7 @@ uchar 	riscVreadbyte(Engine *, State *S, ulong addr);
 ushort 	riscVreadword(Engine *, State *S, ulong addr);
 ulong 	riscVreadlong(Engine *, State *S, ulong addr);
 uvlong 	riscVreadlonglong(Engine *, State *S, ulong addr);
-void 	riscVwritelonglong(Engine *, State *S, ulong addr, ulong data);
+void 	riscVwritelonglong(Engine *, State *S, ulong addr, uvlong data);
 void 	riscVwritelong(Engine *, State *S, ulong addr, ulong data);
 void 	riscVwriteword(Engine *, State *S, ulong addr, ulong data);
 void	riscVwritebyte(Engine *, State *S, ulong addr, ulong data);
