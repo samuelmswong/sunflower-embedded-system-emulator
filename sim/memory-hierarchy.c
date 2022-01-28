@@ -193,7 +193,7 @@ write_4(State * S, ulong source, uchar * target)
 }
 
 void
-big_endian_write_8(ulong source, uchar * target)
+big_endian_write_8(uvlong source, uchar * target)
 {
 	target[7] = (uchar)(source&0xFF);
 	target[6] = (uchar)((source>>8)&0xFF);
@@ -208,7 +208,7 @@ big_endian_write_8(ulong source, uchar * target)
 }
 
 void
-little_endian_write_8(ulong source, uchar * target)
+little_endian_write_8(uvlong source, uchar * target)
 {
 	target[0] = (uchar)(source&0xFF);
 	target[1] = (uchar)((source>>8)&0xFF);
@@ -223,7 +223,7 @@ little_endian_write_8(ulong source, uchar * target)
 }
 
 void
-write_8(State * S, ulong source, uchar * target)
+write_8(State * S, uvlong source, uchar * target)
 {
 	if (S->endian == Little)
 	{
