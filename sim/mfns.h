@@ -801,6 +801,22 @@ void 	riscv_csrrsi(Engine *E, State *S);
 void 	riscv_csrrci(Engine *E, State *S);
 
 /*													*/
+/*			RISC-V RV64I additional functions		*/
+/*													*/
+void    riscv_addw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
+void    riscv_subw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
+void    riscv_sllw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
+void    riscv_srlw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
+void    riscv_sraw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)
+void    riscv_addiw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t    imm0)
+void    riscv_slliw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t    imm0)
+void    riscv_srliw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t    imm0)
+void    riscv_sraiw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t    imm0)
+void    riscv_ld(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint16_t imm0)
+void    riscv_lwu(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint16_t imm0)
+void    riscv_sd(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint16_t imm0, uint16_t imm5)
+
+/*													*/
 /*			RISC-V RV32M additional functions		*/
 /*													*/
 void riscv_mul(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd);
