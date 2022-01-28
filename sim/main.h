@@ -84,7 +84,7 @@
 #	define UVLONGFMT	"%llud"
 #	define ULONGFMT		"%lud"
 #	define UHLONGFMT	"%lux"
-#	define UHVLONGFMT	"%llux"
+#	define UHVLONGFMT	"%llx"
 #	define UH8LONGFMT	"%08lux"
 #	define UH2XFMT		"%02X"
 #else
