@@ -475,7 +475,7 @@ riscv_sllw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd) //	RV64I
 	int	mask = ((1 << xlen_b) - 1);
 	uint8_t	shift = reg_read_riscv(E, S, rs2) & mask;
 
-	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) << shift));
+	reg_set_riscv(E, S, rd, ((uint32_t)reg_read_riscv(E, S, rs1) << shift));
 
 	if (SF_TAINTANALYSIS)
 	{
@@ -511,7 +511,7 @@ riscv_srlw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd) //	RV64I
 	int	mask = ((1 << xlen_b) - 1);
 	uint8_t	shift = reg_read_riscv(E, S, rs2) & mask;
 
-	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) >> shift));
+	reg_set_riscv(E, S, rd, ((uint32_t)reg_read_riscv(E, S, rs1) >> shift));
 
 	if (SF_TAINTANALYSIS)
 	{
@@ -528,7 +528,7 @@ riscv_sra(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd) //	RV32I/RV
 	int		xlen_b = 5;
 	int		mask = ((1 << xlen_b) - 1);
 	uint8_t		shift = reg_read_riscv(E, S, rs2) & mask;
-	uint32_t	data = ((signed long long) reg_read_riscv(E, S, rs1)) >> shift;
+	uint64_t	data = sign_extend(reg_read_riscv(E, S, rs1) >> shift, 64-shift);
 
 	reg_set_riscv(E, S, rd, data);
 
@@ -546,7 +546,7 @@ riscv_sraw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd) //	RV64I
 	int		xlen_b = 5;
 	int		mask = ((1 << xlen_b) - 1);
 	uint8_t		shift = reg_read_riscv(E, S, rs2) & mask;
-	uint64_t	data = ((signed long long) reg_read_riscv(E, S, rs1)) >> shift;
+	uint32_t	data = (uint32_t)(sign_extend(((int32_t)reg_read_riscv(E, S, rs1)), 32) >> shift);
 
 	reg_set_riscv(E, S, rd, data);
 
@@ -579,7 +579,7 @@ riscv_addi(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV32I
 void
 riscv_addiw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV64I
 {
-	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) + sign_extend(imm0, 12)));
+	reg_set_riscv(E, S, rd, ((int32_t)reg_read_riscv(E, S, rs1) + sign_extend(imm0, 12)));
 
 	if (SF_TAINTANALYSIS)
 	{
@@ -698,7 +698,7 @@ riscv_slliw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV64
 	int	mask = ((1 << xlen_b) - 1);
 	uint8_t shift = imm0 & mask;
 
-	reg_set_riscv(E, S, rd, (uint64_t)((uint32_t)reg_read_riscv(E, S, rs1) << shift));
+	reg_set_riscv(E, S, rd, (uint32_t)reg_read_riscv(E, S, rs1) << shift);
 
 	if (SF_TAINTANALYSIS)
 	{
@@ -734,7 +734,7 @@ riscv_srliw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV64
 	int	mask = ((1 << xlen_b) - 1);
 	uint8_t shift = imm0 & mask;
 
-	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) >> shift));
+	reg_set_riscv(E, S, rd, ((int32_t)reg_read_riscv(E, S, rs1) >> shift));
 
 	if (SF_TAINTANALYSIS)
 	{
@@ -751,7 +751,7 @@ riscv_srai(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV32I
 	int	xlen_b = 5;
 	int	mask = ((1 << xlen_b) - 1);
 	uint8_t shift = imm0 & mask;
-	uint64_t	data = ((signed long long)reg_read_riscv(E, S, rs1)) >> shift;
+	uint64_t	data = sign_extend(reg_read_riscv(E, S, rs1) >> shift, 64-shift);
 	reg_set_riscv(E, S, rd, data);
 
 	if (SF_TAINTANALYSIS)
@@ -769,7 +769,7 @@ riscv_sraiw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV64
 	int	xlen_b = 5;
 	int	mask = ((1 << xlen_b) - 1);
 	uint8_t shift = imm0 & mask;
-	uint64_t	data = ((signed long long)reg_read_riscv(E, S, rs1)) >> shift;
+	uint32_t	data = (uint32_t)(sign_extend(reg_read_riscv(E, S, rs1), 32) >> shift);
 	reg_set_riscv(E, S, rd, data);
 
 	if (SF_TAINTANALYSIS)
@@ -993,9 +993,9 @@ riscv_lw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint16_t imm0)
 {
 	uint32_t	addr = reg_read_riscv(E,S, rs1) + sign_extend(imm0, 12);
 
-	uint64_t	value = sign_extend(riscVreadlong(E, S, addr), 32);
+	uint32_t	value = riscVreadlong(E, S, addr);
 
-	reg_set_riscv(E, S, rd, value);
+	reg_set_riscv(E, S, rd, sign_extend(value, 32));
 
 	if (SF_TAINTANALYSIS)
 	{
@@ -1011,7 +1011,7 @@ riscv_lwu(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint16_t imm0) 	//	RV64I
 {
 	uint32_t	addr = reg_read_riscv(E,S, rs1) + sign_extend(imm0, 12);
 
-	uint64_t	value = (uint64_t)0 | (uint32_t)riscVreadlong(E, S, addr);
+	uint32_t	value = riscVreadlong(E, S, addr);
 
 	reg_set_riscv(E, S, rd, value);
 
