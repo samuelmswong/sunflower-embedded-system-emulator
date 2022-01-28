@@ -373,6 +373,20 @@
 %token T_XOR
 %token T_XORI
 
+%token T_ADDW
+%token T_SUBW
+%token T_SLLW
+%token T_SRLW
+%token T_SRAW
+%token T_ADDIW
+%token T_SLLIW
+%token T_SRLIW
+%token T_SRAIW
+%token T_LD
+%token T_LWU
+%token T_SD
+
+
 %type	<uval>	reg
 %type	<uval>	freg
 %type	<sval>	disp
