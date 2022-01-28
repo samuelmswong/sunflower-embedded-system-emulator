@@ -162,7 +162,7 @@ riscvdumpregs(Engine *E, State *S)
 		print_integer_register_abi(E, S, i);
 		mprint(E, S, nodeinfo, "\t", i);
 		mbitprint(E, S, 64, S->riscv->R[i]);
-		mprint(E, S, nodeinfo, "  [0x%08lx]\n", S->riscv->R[i]);
+		mprint(E, S, nodeinfo, "  [0x%016lx]\n", S->riscv->R[i]);
 	}
 
 	mprint(E, S, nodeinfo, "\n");
