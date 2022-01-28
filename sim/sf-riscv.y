@@ -2090,6 +2090,7 @@ addw_riscv_instr	: T_ADDW reg ',' reg ',' reg
 				if (!yyengine->cp->pipelined)	
 				{
 					riscv_addw(yyengine, yyengine->cp, $4, $6, $2);
+					mprint(yyengine, NULL, siminfo, "rv64i addw execudted.");
 				}
 
 				uint32_t tmp = (0b0111011 << 0)		/*	opcode,	bit 0-6			*/
