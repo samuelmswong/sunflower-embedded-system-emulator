@@ -329,7 +329,8 @@ riscVwritelonglong(Engine *E, State *S, ulong vaddr, uvlong data)
 		/*							*/
 		/*	   Pass this address off to the devices.	*/
 		/*							*/
-		sfatal(E, S, "Request to write 64bit value to device memory (outside of ram) is not supported by Sunflower. The addr must be within range %d to %d\n", S->MEMBASE, S->MEMEND - 3);
+		mprint(E, S, siminfo, "The addr must be within the ram, allocated to the range %d - %d\n", S->MEMBASE, S->MEMEND - 3);
+		sfatal(E, S, "Request to write 64bit value to device memory (outside of ram) is not supported by Sunflower.");
 
 		return;
 	}
@@ -585,7 +586,8 @@ riscVreadlonglong(Engine *E, State *S, ulong vaddr)
 	}
 	else
 	{
-		sfatal(E, S, "Request to read 64bit value from device memory (outside of ram) is not supported by Sunflower. The addr must be within range %d to %d\n", S->MEMBASE, S->MEMEND - 3);
+		mprint(E, S, siminfo, "The addr must be within the ram, allocated to the range %d - %d\n", S->MEMBASE, S->MEMEND - 3);
+		sfatal(E, S, "Request to read 64bit value from device memory (outside of ram) is not supported by Sunflower.");
 	}
 
 	if (!S->riscv->cache_activated || !trans.cacheable)
