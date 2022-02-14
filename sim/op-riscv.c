@@ -149,7 +149,7 @@ riscv_add(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)	//	RV32I/RV
 void
 riscv_addw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)	//	RV64I
 {
-	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) + reg_read_riscv(E, S, rs2)));
+	reg_set_riscv(E, S, rd, (int32_t)(reg_read_riscv(E, S, rs1) + reg_read_riscv(E, S, rs2)));
 
 	if (SF_TAINTANALYSIS)
 	{
@@ -177,7 +177,7 @@ riscv_sub(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)	//	RV32I/RV
 void
 riscv_subw(Engine *E, State *S, uint8_t rs1, uint8_t rs2, uint8_t rd)	//	RV64I
 {
-	reg_set_riscv(E, S, rd, (reg_read_riscv(E, S, rs1) - reg_read_riscv(E, S, rs2)));
+	reg_set_riscv(E, S, rd, (int32_t)(reg_read_riscv(E, S, rs1) - reg_read_riscv(E, S, rs2)));
 
 	if (SF_TAINTANALYSIS)
 	{
@@ -579,7 +579,7 @@ riscv_addi(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV32I
 void
 riscv_addiw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV64I
 {
-	reg_set_riscv(E, S, rd, ((int32_t)reg_read_riscv(E, S, rs1) + sign_extend(imm0, 12)));
+	reg_set_riscv(E, S, rd, (int32_t)(reg_read_riscv(E, S, rs1) + sign_extend(imm0, 12)));
 
 	if (SF_TAINTANALYSIS)
 	{
