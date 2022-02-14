@@ -165,39 +165,39 @@ riscvdumpregs(Engine *E, State *S)
 		mprint(E, S, nodeinfo, "  [0x%016llx]\n", S->riscv->R[i]);
 	}
 
-	mprint(E, S, nodeinfo, "\n");
+	// mprint(E, S, nodeinfo, "\n");
 
-	for (i = 0; i < 32; i++)
-	{
-		mprint(E, S, nodeinfo, "f%-2d\t", i);
-		print_fp_register_abi(E, S, i);
-		mprint(E, S, nodeinfo, "\t", i);
-		uint64_t float_bits = S->riscv->fR[i];
-		if((float_bits >> 32) == 0xFFFFFFFF) //NaN boxed
-		{
-			rv32f_rep val;
-			val.bit_value = (uint32_t)float_bits;
-			snprintf(fp_value, sizeof(fp_value), "%#.8g", val.float_value);
-			if (S->riscv->uncertain != NULL && !isnan(S->riscv->uncertain->registers.variances[i]))
-			{
-				size_t start_offset = strlen(fp_value);
-				snprintf(
-					fp_value + start_offset,
-					sizeof(fp_value) - start_offset,
-					" +- %#-.5g", sqrtf(S->riscv->uncertain->registers.variances[i])
-				);
-			}
-			f_width = "single";
-		}
-		else
-		{
-			rv32d_rep val;
-			val.bit64_value = (uint64_t)float_bits;
-			snprintf(fp_value, sizeof(fp_value), "%.8g", val.double_value);
-			f_width = "double";
-		}
-		mprint(E, S, nodeinfo, "%-23s (%s)          [0x%016llx]\n", fp_value, f_width, S->riscv->fR[i]);
-	}
+	// for (i = 0; i < 32; i++)
+	// {
+	// 	mprint(E, S, nodeinfo, "f%-2d\t", i);
+	// 	print_fp_register_abi(E, S, i);
+	// 	mprint(E, S, nodeinfo, "\t", i);
+	// 	uint64_t float_bits = S->riscv->fR[i];
+	// 	if((float_bits >> 32) == 0xFFFFFFFF) //NaN boxed
+	// 	{
+	// 		rv32f_rep val;
+	// 		val.bit_value = (uint32_t)float_bits;
+	// 		snprintf(fp_value, sizeof(fp_value), "%#.8g", val.float_value);
+	// 		if (S->riscv->uncertain != NULL && !isnan(S->riscv->uncertain->registers.variances[i]))
+	// 		{
+	// 			size_t start_offset = strlen(fp_value);
+	// 			snprintf(
+	// 				fp_value + start_offset,
+	// 				sizeof(fp_value) - start_offset,
+	// 				" +- %#-.5g", sqrtf(S->riscv->uncertain->registers.variances[i])
+	// 			);
+	// 		}
+	// 		f_width = "single";
+	// 	}
+	// 	else
+	// 	{
+	// 		rv32d_rep val;
+	// 		val.bit64_value = (uint64_t)float_bits;
+	// 		snprintf(fp_value, sizeof(fp_value), "%.8g", val.double_value);
+	// 		f_width = "double";
+	// 	}
+	// 	mprint(E, S, nodeinfo, "%-23s (%s)          [0x%016llx]\n", fp_value, f_width, S->riscv->fR[i]);
+	// }
 
 
 	return;
