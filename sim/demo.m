@@ -9,5 +9,6 @@ srlw x9, x6, x7
 sraiw x8, x3, 9
 srliw x9, x3, 15
 
+ld x10, x2, 0
 
 dumpregs
