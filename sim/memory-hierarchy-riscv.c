@@ -558,7 +558,7 @@ riscVreadlonglong(Engine *E, State *S, ulong vaddr)
 	/*	address other than 2n or if longword data is written	*/
 	/*	to an address other than 4n				*/
 	/*								*/
-	if (paddr & B0011)
+	if (paddr & B0111)
 	{
 		/*	raise address error	*/
 	}

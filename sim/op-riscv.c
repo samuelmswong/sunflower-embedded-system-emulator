@@ -734,7 +734,7 @@ riscv_srliw(Engine *E, State *S, uint8_t rs1, uint8_t rd, uint32_t	imm0) //	RV64
 	int	mask = ((1 << xlen_b) - 1);
 	uint8_t shift = imm0 & mask;
 
-	reg_set_riscv(E, S, rd, ((int32_t)reg_read_riscv(E, S, rs1) >> shift));
+	reg_set_riscv(E, S, rd, ((uint32_t)reg_read_riscv(E, S, rs1) >> shift));
 
 	if (SF_TAINTANALYSIS)
 	{
