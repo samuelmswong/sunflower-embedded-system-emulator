@@ -9,10 +9,14 @@ srlw x9, x6, x7
 sraiw x8, x3, 2
 srliw x9, x3, 5
 
+subw x10, x8, x9
+subw x11, x9, x8
+sub x12, x9, x8
 
 sd x2, x5, 0
-ld x10, x2, 0
-lwu x11, x2, 0
+ld x13, x2, 0
+lwu x14, x2, 0
+
 
 dumpregs
 
