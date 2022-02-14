@@ -517,6 +517,19 @@ expr		: add_riscv_instr
 		| sw_riscv_instr
 		| xor_riscv_instr
 		| xori_riscv_instr
+/*	RV64I instructions	*/
+		| addw_riscv_instr
+		| subw_riscv_instr
+		| sllw_riscv_instr
+		| srlw_riscv_instr
+		| sraw_riscv_instr
+		| addiw_riscv_instr
+		| slliw_riscv_instr
+		| srliw_riscv_instr
+		| sraiw_riscv_instr
+		| ld_riscv_instr
+		| lwu_riscv_instr
+		| sd_riscv_instr
 		;
 
 
@@ -3565,6 +3578,501 @@ xori_riscv_instr	: T_XORI reg ',' reg ',' simm
 						| (B0100 << 12)		/*	funct3,	bit 12-14		*/
 						| ($4 << 15)		/*	rs1,	bit 15-19		*/
 						| ($6 << 20)		/*	imm,	bit 20-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within allocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			}
+		}
+		;
+
+/*	RV64I instructions	*/
+
+addw_riscv_instr	: T_ADDW reg ',' reg ',' reg
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_addw(yyengine, yyengine->cp, $4, $6, $2);
+				}
+
+				uint32_t tmp = (0b0111011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b000 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	rs2,	bit 20-24		*/
+						| (0b0000000 << 25)	/*	funct7,	bit 25-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within alocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			}
+		}
+		;
+
+subw_riscv_instr	: T_SUBW reg ',' reg ',' reg
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_subw(yyengine, yyengine->cp, $4, $6, $2);
+				}
+
+				uint32_t tmp = (0b0111011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b000 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	rs2,	bit 20-24		*/
+						| (0b0100000 << 25)	/*	funct7,	bit 25-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within alocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			}
+		}
+		;
+
+sllw_riscv_instr	: T_SLLW reg ',' reg ',' reg
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_sllw(yyengine, yyengine->cp, $4, $6, $2);
+				}
+
+				uint32_t tmp = (0b0111011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b001 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	rs2,	bit 20-24		*/
+						| (0b0000000 << 25)	/*	funct7,	bit 25-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within alocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			}
+		}
+		;
+
+srlw_riscv_instr	: T_SRLW reg ',' reg ',' reg
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_srlw(yyengine, yyengine->cp, $4, $6, $2);
+				}
+
+				uint32_t tmp = (0b0111011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b101 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	rs2,	bit 20-24		*/
+						| (0b0000000 << 25)	/*	funct7,	bit 25-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within alocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			}
+		}
+		;
+
+sraw_riscv_instr	: T_SRAW reg ',' reg ',' reg
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_sraw(yyengine, yyengine->cp, $4, $6, $2);
+				}
+
+				uint32_t tmp = (0b0111011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b101 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	rs2,	bit 20-24		*/
+						| (0b0100000 << 25)	/*	funct7,	bit 25-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within alocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			}
+		}
+		;
+
+addiw_riscv_instr	: T_ADDIW reg ',' reg ',' simm
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_addiw(yyengine, yyengine->cp, $4, $2, $6);
+				}
+
+				uint32_t tmp = (0b0011011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b000 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	imm,	bit 20-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within alocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			}
+		}
+		;
+
+slliw_riscv_instr	: T_SLLIW reg ',' reg ',' simm/*shamt*/
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_slliw(yyengine, yyengine->cp, $4, $2, $6);
+				}
+
+				uint32_t tmp = (0b0011011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b001 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	rs2,	bit 20-24		*/
+						| (0b0000000 << 25)	/*	funct7,	bit 25-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within allocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			 }
+		}
+		;
+
+srliw_riscv_instr	: T_SRLIW reg ',' reg ',' simm/*shamt*/
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_srliw(yyengine, yyengine->cp, $4, $2, $6);
+				}
+
+				uint32_t tmp = (0b0011011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b101 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	rs2,	bit 20-24		*/
+						| (0b0000000 << 25)	/*	funct7,	bit 25-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within allocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			 }
+		}
+		;
+
+sraiw_riscv_instr	: T_SRAIW reg ',' reg ',' simm/*shamt*/
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_sraiw(yyengine, yyengine->cp, $4, $2, $6);
+				}
+
+				uint32_t tmp = (0b0011011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b101 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	rs2,	bit 20-24		*/
+						| (0b0100000 << 25)	/*	funct7,	bit 25-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within allocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			 }
+		}
+		;
+
+ld_riscv_instr	: T_LD reg ',' reg ',' simm
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_ld(yyengine, yyengine->cp, $4, $2, $6);
+				}
+
+				uint32_t tmp = (0b0000011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b011 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	imm,	bit 20-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within allocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			}
+		}
+		;
+
+lwu_riscv_instr	: T_LWU reg ',' reg ',' uimm
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_lwu(yyengine, yyengine->cp, $4, $2, $6);
+				}
+
+				uint32_t tmp = (0b0000011 << 0)		/*	opcode,	bit 0-6			*/
+						| ($2 << 7)		/*	rd,	bit 7-11		*/
+						| (0b110 << 12)		/*	funct3,	bit 12-14		*/
+						| ($4 << 15)		/*	rs1,	bit 15-19		*/
+						| ($6 << 20)		/*	imm,	bit 20-31		*/
+						;
+
+				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||
+					yyengine->cp->PC - yyengine->cp->MEMBASE > yyengine->cp->MEMSIZE - 1)
+				{
+					sfatal(yyengine, yyengine->cp, "Invalid PC address. Must be within allocated memory.");
+				}
+				else
+				{
+					memmove(&yyengine->cp->MEM[yyengine->cp->PC - yyengine->cp->MEMBASE],
+						&tmp, sizeof(tmp));
+				}
+				yyengine->cp->PC += 4;
+			}
+		}
+		;
+
+sd_riscv_instr	: T_SD reg ',' reg ',' simm
+		{
+			if (yyengine->scanning)
+			{
+				yyengine->cp->PC += 4;
+			}
+			else if (yyengine->cp->machinetype != MACHINE_RISCV)
+			{
+				mprint(yyengine, NULL, siminfo, 
+					"Inline assembler is for RV32I(FD) nodes only. Check node type.");
+			}
+			else
+			{
+				uint8_t imm0 = ($6 >> 0) & B00011111;	/*	Shift the fragements	*/
+				uint8_t imm5 = ($6 >> 4) & B01111111;	/*	so that they are each	*/
+									/*	an individual number	*/
+
+				if (!yyengine->cp->pipelined)	
+				{
+					riscv_sd(yyengine, yyengine->cp, $2, $4, imm0, imm5);
+				}
+
+				uint32_t tmp = (0b0100011 << 0)		/*	opcode,	bit 0-6			*/
+						| (imm0 << 7)		/*	imm11,	bit 7-11		*/
+						| (0b011 << 12)		/*	funct3,	bit 12-14		*/
+						| ($2 << 15)		/*	rs1,	bit 15-19		*/
+						| ($4 << 20)		/*	rs2,	bit 20-24		*/
+						| (imm5 << 25)		/*	imm5-10,bit 25-31		*/
 						;
 
 				if (yyengine->cp->PC - yyengine->cp->MEMBASE < 0 ||

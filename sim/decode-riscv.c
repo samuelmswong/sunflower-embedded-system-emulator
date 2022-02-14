@@ -442,7 +442,7 @@ riscvdecode(Engine *  E, State *  S, uint32_t instr, RiscvPipestage *  stage)
 
 					break;
 				}
-				case 0b001:	// RV64I - SLLIW
+				case 0b001:	// RV64I - SLLW
 				{
 					stage->fptr = (void *) riscv_sllw;
 					stage->format = INSTR_R;
@@ -455,7 +455,7 @@ riscvdecode(Engine *  E, State *  S, uint32_t instr, RiscvPipestage *  stage)
 				{
 					switch(tmp->funct7)
 					{
-						case 0b0000000: // RV64I - SRLIW
+						case 0b0000000: // RV64I - SRLW
 						{
 							stage->fptr = (void *) riscv_srlw;
 							stage->format = INSTR_R;
@@ -464,7 +464,7 @@ riscvdecode(Engine *  E, State *  S, uint32_t instr, RiscvPipestage *  stage)
 
 							break;
 						}
-						case 0b0100000: // RV64I - SRAIW
+						case 0b0100000: // RV64I - SRAW
 						{
 							stage->fptr = (void *) riscv_sraw;
 							stage->format = INSTR_R;
