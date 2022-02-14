@@ -6,8 +6,8 @@ addiw x6, x5, 15
 addi x7, x0, 3
 sraw x8, x6, x7
 srlw x9, x6, x7
-sraiw x8, x3, 9
-srliw x9, x3, 15
+sraiw x8, x3, 2
+srliw x9, x3, 5
 
 ld x10, x2, 0
 

@@ -582,12 +582,9 @@ riscVreadlonglong(Engine *E, State *S, ulong vaddr)
 		/*	devport. If addr not found in devport, try	*/
 		/*	arch-specific dev if not, fail with sfatal.	*/
 		/*							*/
-		return devportreadlong(E, S, vaddr);
-	}
-	else
-	{
 		mprint(E, NULL, siminfo, "The addr (%d) must be within the ram, allocated to the range %d - %d\n", paddr, S->MEMBASE, S->MEMEND - 3);
 		sfatal(E, S, "Request to read 64bit value from device memory (outside of ram) is not supported by Sunflower.");
+		// return devportreadlong(E, S, vaddr);
 	}
 
 	if (!S->riscv->cache_activated || !trans.cacheable)
