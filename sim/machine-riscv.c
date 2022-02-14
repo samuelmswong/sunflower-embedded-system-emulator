@@ -641,7 +641,7 @@ riscvnewstate(Engine *E, double xloc, double yloc, double zloc, char *trajfilena
 
 	E->cp = S;
 	E->sp[E->nnodes] = S;
-	mprint(E, NULL, siminfo, "New node created with node ID %d\n", E->nnodes);
+	mprint(E, NULL, siminfo, "New riscv node created with node ID %d\n", E->nnodes);
 
 	/*	Update the min cycle time	*/
 	E->mincycpsec = PICOSEC_MAX;

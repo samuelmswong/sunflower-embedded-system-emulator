@@ -989,7 +989,7 @@ superHnewstate(Engine *E, double xloc, double yloc, double zloc, char *trajfilen
 
 	E->cp = S;
 	E->sp[E->nnodes] = S;
-	mprint(E, NULL, siminfo, "New node created with node ID %d\n", E->nnodes);
+	mprint(E, NULL, siminfo, "New superh node created with node ID %d\n", E->nnodes);
 
 	/*	Update the min cycle time	*/
 	E->mincycpsec = PICOSEC_MAX;
