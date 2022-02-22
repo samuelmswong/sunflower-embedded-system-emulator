@@ -13,9 +13,13 @@ subw x10, x8, x9
 subw x11, x9, x8
 sub x12, x9, x8
 
-sd x2, x5, 0
 ld x13, x2, 0
-lwu x14, x2, 0
+sd x2, x5, 0
+sd x2, x6, 8
+ld x14, x2, 0
+lwu x15, x2, 0
+ld x16, x2, 8
+lwu x17, x2, 8
 
 
 dumpregs
